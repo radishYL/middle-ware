@@ -1,0 +1,14 @@
+生产者将消息发送到指定虚拟地址的Exchange下,Exchange根据路由键将消息推送到指定的队列下(一条或多条)
+消费者订阅指定虚拟地址下的队列,从中获取消息
+交换机(Exchange)
+    1. Direct Exchange 发送到交换机的消息被转发到RouteKey中指定的Queue
+
+    2. Topic Exchange 发送到交换机的消息被转发到所有关心RounteKey中指定的topic的queue中
+       模糊匹配: #匹配一个或多个词 *匹配一个词
+       栗子:exchangeA与queueA通过路由键rout#绑定,则生产者通过路由键routA、routABC...发送到交换机exchangeA的消息都会被发到queueA上
+
+    3. Fanout Exchange 不处理路由键,路由键的作用只是将队列绑定到交换机上;所有发送到该交换机的消息会被转发到与该交换机绑定的所有队列上
+       性能最高,因为不处理路由键。
+
+    4. Headers Exchange 根据消息头进行路由,不常用
+
