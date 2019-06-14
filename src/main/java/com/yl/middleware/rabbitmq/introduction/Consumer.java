@@ -4,6 +4,7 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.QueueingConsumer;
+import com.yl.middleware.rabbitmq.ConnectionFactory;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -118,7 +119,7 @@ public class Consumer {
         String exchangeName = "dev_fanout_exchange";
         String exchangeType = "fanout";
         String queueName = "dev-fanout-queue";
-        // 根据模糊匹配规则,routingKey可以匹配所有已dev.topic.开头的路由键
+        // 此处的路由键只是进行exchange和queue的绑定,所有发送到改交换机的消息会被转发到所有与该交换机绑定的队列中
         String routingKey = "dev.fanout";
 
         // 声明一个交换机
@@ -133,7 +134,9 @@ public class Consumer {
         channel.basicConsume(queueName, true, consumer);
 
         while (true){
+            System.err.println("consumer开始拉取消息");
 
+            // 此处是一个阻塞的过程,当队列无消息的时候,会阻塞
             QueueingConsumer.Delivery delivery = consumer.nextDelivery();
             AMQP.BasicProperties properties = delivery.getProperties();
             System.err.println(properties.getContentEncoding());

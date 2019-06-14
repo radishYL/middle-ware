@@ -1,4 +1,4 @@
-package com.yl.middleware.rabbitmq.introduction;
+package com.yl.middleware.rabbitmq;
 
 /**
  * @author Alex
@@ -11,6 +11,7 @@ public class ConnectionFactory {
         connectionFactory.setHost("127.0.0.1");// ip
         connectionFactory.setPort(5672);// port
         connectionFactory.setVirtualHost("/dev");// 虚拟地址
+        connectionFactory.setConnectionTimeout(10*1000);// 连接超时时间
     }
 
     public static com.rabbitmq.client.Connection getConnection()throws Exception{

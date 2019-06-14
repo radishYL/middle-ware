@@ -3,6 +3,7 @@ package com.yl.middleware.rabbitmq.introduction;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
+import com.yl.middleware.rabbitmq.ConnectionFactory;
 
 import java.util.HashMap;
 import java.util.Map;
