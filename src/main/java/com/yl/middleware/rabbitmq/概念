@@ -56,3 +56,44 @@
                mandatory参数必须为true(默认为false),若为false,则Broker会直接删除不可达消息,不会进行回调处理
 
 关于消费端限流
+     1.channel.basicQos(0,1,false);
+        参数1-限流消息大小(0表示不限大小) 参数2-限流消息条数(即每次从队列消费N条消息) 参数3-是否应用到channel级别(false表示应用到consumer)
+     2.channel.basicConsume(queueName,false,new RateLimitConsumer(channel));
+        限流必须设置autoAck = false进行手动确认消息this.getChannel().basicAck(envelope.getDeliveryTag(), false);
+
+关于死信队列
+    概念:当一个消息在队列中没被消费,会被publish到一个exchange上,这个exchange就是私信队列DLX(dead-letter-exchange)
+    什么情况下消息会被发到私信队列:
+        1.消息被拒绝basicReject/basicNack,且不重回队列requeue = false
+        2.消息ttl过期。队列设置过期时间(通过arguments设置,arguments.put("x-message-ttl",10000))、消息设置过期(通过properties设置)
+        3.队列设置最大长度,达到最大长度时,新发送的消息会被发送到私信队列(arguments.put("x-max-length",1000))
+    如何设置私信队列:
+        1.定义一个正常的exchange和queue并设置绑定关系(推荐使用'#'作为路由键),作为其他队列的DLX
+        2.定义一个正常的queue,并通过arguments设置其死信队列arguments.put("x-dead-letter-exchange","dlx_exchange");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
