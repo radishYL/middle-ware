@@ -25,3 +25,9 @@
 hs_err_pid*
 
 /.gitignore
+.idea/inspectionProfiles/
+.idea/misc.xml
+.idea/vcs.xml
+.idea/workspace.xml
+target/classes/application.yml
+target/generated-sources/
