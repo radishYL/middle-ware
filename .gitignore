@@ -25,7 +25,7 @@
 hs_err_pid*
 .idea/**
 .gitignore
-.iml
+*.iml
 /.gitignore
 .idea/inspectionProfiles/
 .idea/misc.xml
