@@ -56,7 +56,6 @@ public class RateLimitConsumer extends DefaultConsumer {
         channel.basicQos(0,1,false);
         channel.basicConsume(queueName,false,new RateLimitConsumer(channel));
 
-
     }
 
 }

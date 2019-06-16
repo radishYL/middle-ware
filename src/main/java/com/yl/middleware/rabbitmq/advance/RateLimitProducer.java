@@ -65,7 +65,6 @@ public class RateLimitProducer {
             channel.basicPublish(exchangeName, routingKey,true, null, line.getBytes());
         }
         connection.close();
-
     }
 
 }
