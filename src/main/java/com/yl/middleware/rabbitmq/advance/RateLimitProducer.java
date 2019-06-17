@@ -55,14 +55,18 @@ public class RateLimitProducer {
         String routingKey = "confirm.save";
 
         Scanner scanner = new Scanner(System.in);
-
+        AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder()
+            .deliveryMode(2)//1-不持久化消息 2-持久化消息
+            .contentEncoding("UTF-8")// 编码类型
+            .expiration("15000")// 过期时间-10s
+            .build();
         String line = null;
         while (!(line = scanner.nextLine()).equals("exit")){
             /**
              * 当使用ReturnListener的时候,mandatory必须设置为true
              * 不然Broker端会自动删除不可达的消息
              */
-            channel.basicPublish(exchangeName, routingKey,true, null, line.getBytes());
+            channel.basicPublish(exchangeName, routingKey,true, properties, line.getBytes());
         }
         connection.close();
     }

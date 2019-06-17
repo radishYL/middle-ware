@@ -5,7 +5,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.QueueingConsumer;
 import com.yl.middleware.rabbitmq.ConnectionFactory;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 /**
  * @author Alex
