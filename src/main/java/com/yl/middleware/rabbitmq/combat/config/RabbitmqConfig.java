@@ -117,10 +117,6 @@ public class RabbitmqConfig {
 
         /**
          * 采用适配器模式监听消息<二>:不同队列使用不同方法处理
-         *
-         *  注意事项:
-         *      1.delegate中的方法可以自己重新定义(默认方法名handleMessage),如果不适用默认方法名,需显示指定
-         *      2.方法的参数是byte[],如果更改需要自定义converter转换
          */
         MessageListenerAdapter adapter = new MessageListenerAdapter(new CustomerMsgHandler());
         Map<String,String> queueOrTagToMethodName = new HashMap<>();
