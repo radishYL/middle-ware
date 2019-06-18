@@ -1,5 +1,7 @@
 package com.yl.test.spring;
 
+import com.yl.main.Application;
+import com.yl.middleware.rabbitmq.combat.component.RabbitSender;
 import com.yl.middleware.rabbitmq.combat.config.RabbitmqConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Scanner;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Alex
@@ -30,6 +35,8 @@ public class SpringAmqpTest {
     private Exchange exchange_user;
     @Autowired
     private Exchange deadLetterExchange;
+    @Autowired
+    private RabbitSender rabbitSender;
 
     @Test
     public void demo_1() throws Exception{
@@ -58,4 +65,14 @@ public class SpringAmqpTest {
         Thread.currentThread().sleep(60*10000);
     }
 
+    @Test
+    public void demo_2() throws Exception{
+
+        Map<String,Object> headers = new HashMap<>();
+        headers.put("name", "miss");
+        headers.put("sendTime", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        rabbitSender.send("user_exchange", "user.reg.invest", "invest user reg", headers);
+
+        Thread.currentThread().sleep(60*10000);
+    }
 }

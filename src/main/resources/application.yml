@@ -1,0 +1,12 @@
+# 使用yml文件配置,便不能使用java bean配置
+spring:
+  rabbitmq:
+    publisher-confirms: true
+    publisher-returns: true
+    template:
+      mandatory: true
+    addresses: 127.0.0.1:5672
+    virtual-host: /dev
+    listener:
+      direct:
+        acknowledge-mode: manual

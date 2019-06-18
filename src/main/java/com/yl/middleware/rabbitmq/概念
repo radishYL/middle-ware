@@ -79,6 +79,27 @@
             2.死信队列的路由key设为"dlx.#"时, 必须设置arguments.put("x-dead-letter-routing-key", "dlx.123..")进行匹配;
         3.当使用Fanout Exchange时,不需设置x-dead-letter-routing-key属性
 
+#关于Spring Cloud Stream整合Rabbitmq部分的知识今后使用到再进行系统学习
+
+
+关于RabbitMq集群
+    <一>主备模式
+        概念:主节点提供读写,备节点不提供读写,当主节点故障,备节点升级成主节点提供读写
+        使用场景:并发量不高的情况下使用
+        实现方式:
+            1.使用HaProxy做主备切换
+            2.主备节点使用共享存储
+         HaProxy
+
+
+    <二>远程模式(Shovel)
+        概念:把消息进行不同数据中心的复制工作,将跨网络的两个mq集群互联
+
+
+    <三>镜像模式(Mirror)*重要(主流集群架构方案)
+
+
+    <四>多活模式
 
 
 

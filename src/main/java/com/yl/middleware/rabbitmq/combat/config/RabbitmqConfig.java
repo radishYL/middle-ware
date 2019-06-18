@@ -3,13 +3,18 @@ package com.yl.middleware.rabbitmq.combat.config;
 import com.yl.middleware.rabbitmq.combat.component.converter.CustomerMessageConvert;
 import com.yl.middleware.rabbitmq.combat.component.CustomerMsgHandler;
 import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.listener.RabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.amqp.support.ConsumerTagStrategy;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.HashMap;
@@ -21,6 +26,8 @@ import java.util.UUID;
  * @since 2019/6/17 10:44
  */
 @Configuration
+@ComponentScan(value = {"com.yl.middleware.rabbitmq"})
+@EnableRabbit
 public class RabbitmqConfig {
 
 
@@ -32,7 +39,28 @@ public class RabbitmqConfig {
         //connectionFactory.setPassword("guest");
         connectionFactory.setVirtualHost("/dev");
         connectionFactory.setConnectionTimeout(10*1000);
+        // 开启签收监听
+        connectionFactory.setPublisherConfirms(true);
+        // 开启可达监听
+        connectionFactory.setPublisherReturns(true);
         return connectionFactory;
+    }
+
+    @Bean
+    public RabbitListenerContainerFactory rabbitListenerContainerFactory(){
+        SimpleRabbitListenerContainerFactory containerFactory = new SimpleRabbitListenerContainerFactory();
+        containerFactory.setConnectionFactory(connectionFactory());
+        containerFactory.setAcknowledgeMode(AcknowledgeMode.MANUAL);
+        containerFactory.setReceiveTimeout(10*1000L);
+        containerFactory.setConcurrentConsumers(1);
+        containerFactory.setMaxConcurrentConsumers(1);
+        containerFactory.setConsumerTagStrategy(new ConsumerTagStrategy() {
+            @Override
+            public String createConsumerTag(String queue) {
+                return queue + "_" + "yu.alex";
+            }
+        });
+        return containerFactory;
     }
 
     @Bean
@@ -40,6 +68,13 @@ public class RabbitmqConfig {
         RabbitAdmin rabbitAdmin = new RabbitAdmin(connectionFactory);
         rabbitAdmin.setAutoStartup(true);// 自动启动
         return rabbitAdmin;
+    }
+    @Bean
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory){
+        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+        // 如果要进行消息可达(return)监听,必须设置为true,不然Broker会直接删除不可达消息
+        rabbitTemplate.setMandatory(true);
+        return rabbitTemplate;
     }
 
     /**
@@ -80,7 +115,7 @@ public class RabbitmqConfig {
         return new Binding(user_queue().getName(), Binding.DestinationType.QUEUE, exchange_user().getName(), "user.#",null );
     }
 
-    @Bean
+    //@Bean
     public SimpleMessageListenerContainer messageContainer(){
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer(connectionFactory());
         container.setQueues(deadLetterQueue(),user_queue());// 设置监控队列
@@ -125,6 +160,10 @@ public class RabbitmqConfig {
         adapter.setMessageConverter(new CustomerMessageConvert());
         adapter.setQueueOrTagToMethodName(queueOrTagToMethodName);
         container.setMessageListener(adapter);
+
+        /**
+         * 关于消息转换器种类很多,后续用到再去查
+         */
 
         return container;
     }
